@@ -174,7 +174,6 @@ class MyView(View):
 async def button_modal(ctx: discord.ApplicationContext):
     await ctx.respond("Заявка для получения доступа к серверу:3", view=MyView())'''
 
-
 @bot.command(name="create_ticket", description="If you have any problems, please create a ticket!")
 @default_permissions(manage_channels=True)
 async def openticket(ctx, member: discord.Member):
