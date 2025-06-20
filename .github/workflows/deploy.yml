@@ -1,0 +1,40 @@
+name: Deploy to Production Server
+
+on:
+  # Запускать воркфлоу при push в ветку main
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # На чем будет выполняться сам воркфлоу
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy to Server via SSH
+        # Используем популярный action для SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}       # IP-адрес сервера из секретов
+          username: ${{ secrets.SSH_USER }}   # Имя пользователя из секретов
+          key: ${{ secrets.SSH_PRIVATE_KEY }} # Приватный SSH-ключ из секретов
+          port: 22                            # Порт SSH (обычно 22)
+          script: |
+            # Команды, которые будут выполняться на вашем сервере
+            cd /home/Hori
+            git pull
+            python3 Main.py
+            echo "✅ Код успешно обновлен"
+
+            # Команды для установки зависимостей (раскомментируйте нужное)
+            # composer install --no-dev --optimize-autoloader
+            # npm install && npm run build
+
+            # Команды для перезапуска сервисов (пример)
+            # sudo systemctl restart nginx
+            # sudo systemctl restart php8.2-fpm
+            # pm2 restart my-app
+            echo "🚀 Деплой завершен!"
