@@ -174,14 +174,15 @@ class MyView(View):
 async def button_modal(ctx: discord.ApplicationContext):
     await ctx.respond("Заявка для получения доступа к серверу:3", view=MyView())'''
 
-@bot.command(name="create_ticket", description="If you have any problems, please create a ticket!")
-@default_permissions(manage_channels=True)
+@bot.command(name="createticket", description="If you have any problems, please create a ticket!")
+#@default_permissions(manage_channels=True)
 async def openticket(ctx, member: discord.Member):
     category = discord.utils.get(ctx.guild.categories, name="Tickets")
     await ctx.respond('ticket created:3', ephemeral=True)
     if not category:
         category = await ctx.guild.create_category("Tickets")
-        overwrites = {
+
+    overwrites = {
         ctx.guild.default_role: discord.PermissionOverwrite(read_messages=False),
         member: discord.PermissionOverwrite(read_messages=True, send_messages=True),
         ctx.guild.me: discord.PermissionOverwrite(read_messages=True, send_messages=True)
@@ -196,7 +197,7 @@ async def openticket(ctx, member: discord.Member):
 class TicketButton(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)  # Кнопки не исчезнут со временем
-        self.moderator_role_id = 1258410847487787078  # Лучше использовать int, но str тоже работает
+        self.moderator_role_id = 1274761910130315277  # Лучше использовать int, но str тоже работает
 
     @discord.ui.button(label="Close ticket", style=discord.ButtonStyle.red, emoji="❌", custom_id="close_ticket")
     async def close_ticket_callback(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -205,7 +206,7 @@ class TicketButton(discord.ui.View):
         # `ctx` здесь недоступен.
 
         # Простая проверка, что канал действительно является тикетом
-        if "тикет-" in interaction.channel.name:
+        if "ticket-" in interaction.channel.name:
             await interaction.response.send_message("The ticket will be closed in 5 seconds...")
             await asyncio.sleep(5)
             await interaction.channel.delete()
@@ -290,11 +291,11 @@ class Team(View):
     def __init__(self):
         super().__init__(timeout=None)
     @discord.ui.button(label="Fill out an application", style=discord.ButtonStyle.green, emoji="📋")
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(TeamInvite())
 
 @bot.command(name="inviteteam", description="Create an application form for the Horizon team")
-@commands.has_permissions(administrator=True)
+@default_permissions(administrator=True)
 async def button_modal(ctx: discord.ApplicationContext):
     await ctx.respond("Application to join the Horizon team:^", view=Team())
 
