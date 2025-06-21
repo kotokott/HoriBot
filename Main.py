@@ -23,7 +23,6 @@ bot = discord.Bot(intents=intents)
 #---------------------------------------------
 role_id = 1274773142723891294
 WELCOME_CHANNEL_ID = 1274771798721826897
-YOUR_CHANNEL_ID = 1328453129158656000
 API_KEY = os.getenv('live_8x1Emr8VAL4imaTpNcWM2HPFBQG32fyvHOwXHIBBLv4bv8cUk8lWjK7Sm5aKbUEb')  # Убедитесь, что вы добавили CAT_API_KEY в .env файл
 #---------------------------------------------
 
@@ -231,6 +230,7 @@ class TicketButton(discord.ui.View):
 class TeamInvite(discord.ui.Modal):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs, title="Application to join the Horizon team:^")
+
         self.add_item(discord.ui.InputText(
             label="Your name:",
             placeholder="Jack",
@@ -265,7 +265,7 @@ class TeamInvite(discord.ui.Modal):
 
     async def callback(self, interaction: discord.Interaction):
         member = interaction.user
-        role = discord.utils.get(guild.roles, name="Applicant")
+        role = discord.utils.get(interaction.guild.roles, name="Applicant")
         if role:
             try:
                 await member.add_roles(role)
@@ -281,17 +281,18 @@ class TeamInvite(discord.ui.Modal):
         embed.add_field(name="**Timezone:**", value=self.children[3].value, inline=False)
         embed.add_field(name="**Sociability(1 to 10):**", value=self.children[4].value, inline=False)
         embed.set_footer(text="From Hori🥰")
-        channel = bot.get_channel(YOUR_CHANNEL_ID)  # Замените на ID вашего канала
+        channel = bot.get_channel(1328453129158656000)  # Замените на ID вашего канала
         await channel.send(embed=embed)
         await interaction.response.send_message("Data sent! If you match, we will write to you:3", ephemeral=True)
-        await interaction.response.send_message(f"You have been given a role {role.name}")
+        await interaction.followup.send(f"You have been given a role {role.name}", ephemeral=True)
 
 
 class Team(View):
     def __init__(self):
         super().__init__(timeout=None)
+
     @discord.ui.button(label="Fill out an application", style=discord.ButtonStyle.green, emoji="📋")
-    async def callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def application_button(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.response.send_modal(TeamInvite())
 
 @bot.command(name="inviteteam", description="Create an application form for the Horizon team")
