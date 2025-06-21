@@ -27,7 +27,7 @@ jobs:
             cd /home/Hori
             git pull
             python3 Main.py
-            echo "✅ Код успешно обновлен"
+            echo "✅ Код успешно обновлен!"
 
             # Команды для установки зависимостей (раскомментируйте нужное)
             # composer install --no-dev --optimize-autoloader
